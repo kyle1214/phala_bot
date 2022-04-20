@@ -1,7 +1,7 @@
 from multiprocessing import pool
 from substrateinterface import SubstrateInterface
 import logging
-import worker, account, common, info_from_db, info_from_subscan
+import worker, common, info_from_db, info_from_subscan
 from telegram import Bot, InputTextMessageContent, ParseMode, ReplyKeyboardMarkup, Update, ReplyKeyboardRemove
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
