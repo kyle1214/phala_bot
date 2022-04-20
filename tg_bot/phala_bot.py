@@ -317,7 +317,11 @@ def worker_status(update: Update, context: CallbackContext) -> int:
             if result:
                 status = result.get('state')
                 if status == 'MiningIdle':
-                    status = 'Mining'
+                    status = 'Mining 🟢'
+                elif status == 'MiningUnresponsive':
+                    status = "Unresponsive 🔴"
+                elif status == "MiningCoolingDown":
+                    status = "CoolingDown 🔵"
                 p_instant = result.get('p_instant')
                 mined = float(result.get('total_reward')) / 10**12
                 mined = '{:.3f}'.format(float(mined))
