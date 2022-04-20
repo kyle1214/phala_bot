@@ -1,9 +1,9 @@
 from substrateinterface import SubstrateInterface
 import logging
 
-url = "wss://khala.api.onfinality.io/public-ws"
+"""
 substrate = SubstrateInterface(
-    url=url
+    url="wss://khala.api.onfinality.io/public-ws"
 )
 
 def get_worker_account_id_from_pubkey(worker_pubkey:str):
@@ -34,7 +34,7 @@ def get_operation_account_from_worker(worker_pubkey:str, substrate:SubstrateInte
     )
     #logging.info(f"get_worker_account_id_from_pubkey::{result}")
     return result
-
+"""
 def get_pool_info(pool_id:int):
     url = "wss://khala.api.onfinality.io/public-ws"
     substrate = SubstrateInterface(
@@ -49,5 +49,3 @@ def get_pool_info(pool_id:int):
     return result
 
 
-if __name__ == '__main__':
-    get_worker_account_id_from_pubkey('0x84aaf9c7f851f36691709ce14b6e7efe4aee12627e19352be05ed9a7490a865f')
