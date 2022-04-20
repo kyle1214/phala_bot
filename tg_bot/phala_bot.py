@@ -92,7 +92,7 @@ def start(update: Update, context: CallbackContext) -> int:
     if pid_list:
         reply_text +=  "Your registered PID(s): \n"
         for key in pid_list:
-            reply_text += f'\t🧰 {key}\n'
+            reply_text += f'\t🌀 {key}\n'
     else:
         reply_text += f'Hello {user.first_name}\nWelcome to Phala miner check bot Provided by SubStake✨ \n\n'
         reply_text += 'Bot doesn\'t have any your wallet information\n'
@@ -337,7 +337,7 @@ def pool_info(update: Update, context: CallbackContext) -> int:
     chat_id = update.message.from_user.id
 
     pid_list = get_pidlist_by_chatid(chat_id)
-    
+    total_own_rewards = 0
     for pid in pid_list:
         result = info_from_db.get_pool_info(pid)
         owner_address = result['owner_address']
@@ -347,6 +347,8 @@ def pool_info(update: Update, context: CallbackContext) -> int:
         total_stake = result['total_stake']
         free_stake = result['free_stake']
         releasing_stake = result['releasing_stake']
+        
+        total_own_rewards += owner_reward
         
         commission = '{:.0f}'.format(float(commission)/10**4)
         owner_reward = '{:.3f}'.format(float(owner_reward/10**12))
@@ -368,6 +370,9 @@ def pool_info(update: Update, context: CallbackContext) -> int:
         reply_text += f" 💰 Free Delegation: {free_stake} \n"
         reply_text += f" ⏱️ Releasing Stake: {releasing_stake} \n\n"
         
+    reply_text += f" -----\n"
+    total_own_rewards = '{:.3f}'.format(float(total_own_rewards/10**12))
+    reply_text += f" 💵 Total Owner Rewards: {total_own_rewards}"
     update.message.reply_text(reply_text, reply_markup=get_ref_url_inlinebutton())
     return TYPING_SEARCHING   
 
