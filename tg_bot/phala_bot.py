@@ -351,28 +351,28 @@ def pool_info(update: Update, context: CallbackContext) -> int:
         total_own_rewards += owner_reward
         
         commission = '{:.0f}'.format(float(commission)/10**4)
-        owner_reward = '{:.3f}'.format(float(owner_reward/10**12))
+        owner_reward = '{:.2f}'.format(float(owner_reward/10**12))
         if cap == -1:
             cap = '∞'
         else:
-            cap = '{:.3f}'.format(float(cap/10**12))
-        total_stake = '{:.3f}'.format(float(total_stake/10**12))
-        free_stake = '{:.3f}'.format(float(free_stake/10**12))
-        releasing_stake = '{:.3f}'.format(float(releasing_stake/10**12))
+            cap = '{:.2f}'.format(float(cap/10**12))
+        total_stake = '{:.2f}'.format(float(total_stake/10**12))
+        free_stake = '{:.2f}'.format(float(free_stake/10**12))
+        releasing_stake = '{:.2f}'.format(float(releasing_stake/10**12))
         
         reply_text += f"🌀 PID : {pid}\n"
         reply_text += f" -- \n"
         reply_text += f" 🧰 Owner: {short_addr2(owner_address)}\n"
         reply_text += f" ⚖️ Commission: {commission}%\n"
-        reply_text += f" 💎 Own rewards: {owner_reward} \n"
-        reply_text += f" 🧢 Cap : {cap} \n"
-        reply_text += f" 🍥 Delegated: {total_stake} \n"
-        reply_text += f" 💰 Free Delegation: {free_stake} \n"
-        reply_text += f" ⏱️ Releasing Stake: {releasing_stake} \n\n"
+        reply_text += f" 💎 Own rewards: {owner_reward} PHA \n"
+        reply_text += f" 🧢 Cap : {cap} PHA \n"
+        reply_text += f" 🍥 Delegated: {total_stake} PHA \n"
+        reply_text += f" 💰 Free Delegation: {free_stake} PHA \n"
+        reply_text += f" ⏱️ Releasing Stake: {releasing_stake} PHA \n\n"
         
     reply_text += f" -----\n"
     total_own_rewards = '{:.3f}'.format(float(total_own_rewards/10**12))
-    reply_text += f" 💵 Total Owner Rewards: {total_own_rewards}"
+    reply_text += f" 💵 Total Owner Rewards: {total_own_rewards} PHA"
     update.message.reply_text(reply_text, reply_markup=get_ref_url_inlinebutton())
     return TYPING_SEARCHING   
 
@@ -460,7 +460,7 @@ def main() -> None:
 
     #show_data_handler = CommandHandler('show_data', show_data)
     #dispatcher.add_handler(show_data_handler)
-    #dispatcher.add_error_handler(error_handler)
+    dispatcher.add_error_handler(error_handler)
     
     # Start the Bot
     updater.start_polling()
