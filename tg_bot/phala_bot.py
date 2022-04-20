@@ -372,7 +372,7 @@ def pool_info(update: Update, context: CallbackContext) -> int:
         
     reply_text += f" -----\n"
     total_own_rewards = '{:.3f}'.format(float(total_own_rewards/10**12))
-    reply_text += f" 💵 Total Owner Rewards: {total_own_rewards} PHA"
+    reply_text += f" 💵 Claimable Rewards: {total_own_rewards} PHA"
     update.message.reply_text(reply_text, reply_markup=get_ref_url_inlinebutton())
     return TYPING_SEARCHING   
 
