@@ -310,6 +310,7 @@ def worker_status(update: Update, context: CallbackContext) -> int:
         miner_list = info_from_db.get_worker_pubkey_by_pid(pid)
         reply_text += f"\n🌀 PID : {pid}\n"
         reply_text += f" -- \n"
+        emoji = '⚙️'
         for miner in miner_list:
             worker_pubkey = miner[0]
             result = info_from_db.get_worker_status(worker_pubkey)
@@ -317,17 +318,20 @@ def worker_status(update: Update, context: CallbackContext) -> int:
             if result:
                 status = result.get('state')
                 if status == 'MiningIdle':
-                    status = 'Mining 🟢'
+                    status = 'Mining '
+                    emoji = '🟢'
                 elif status == 'MiningUnresponsive':
-                    status = "Unresponsive 🔴"
+                    status = "Unresponsive "
+                    emoji = '🔴'
                 elif status == "MiningCoolingDown":
-                    status = "CoolingDown 🔵"
+                    status = "CoolingDown "
+                    emoji = '🔵'
                 p_instant = result.get('p_instant')
                 mined = float(result.get('total_reward')) / 10**12
                 mined = '{:.3f}'.format(float(mined))
                 logging.info(f"worker_status::{status}:{p_instant}:{mined}")
                 reply_text += f" 🔐 {short_addr2(worker_pubkey)}\n"
-                reply_text += f" ⚙️ Status : {status}\n"
+                reply_text += f" {emoji} Status : {status}\n"
                 reply_text += f" 🌡️ P_inst : {p_instant}\n"
                 reply_text += f" ⚒️ Mined : {mined} PHA\n\n"
             else :
