@@ -370,7 +370,7 @@ def pool_info(update: Update, context: CallbackContext) -> int:
         
         reply_text += f"🌀 PID : {pid}\n"
         reply_text += f" -- \n"
-        reply_text += f" 🧰 Owner: {short_addr2(owner_address)}\n"
+        reply_text += f" 🧰 {short_addr2(owner_address)}\n"
         reply_text += f" ⚖️ Commission: {commission}%\n"
         reply_text += f" 💎 Own rewards: {owner_reward} PHA \n"
         reply_text += f" 🧢 Cap : {cap} PHA \n"
