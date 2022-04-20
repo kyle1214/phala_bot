@@ -1,0 +1,40 @@
+
+
+drop table phala_user_pid;
+create table phala_user_pid (
+    chat_id int,
+    pid int,
+    Primary Key(chat_id, pid)
+);
+
+drop table phala_pid_owner_info;
+create table phala_pid_owner_info (
+    pid int,
+    owner_address varchar(1000),
+    commission int,
+    owner_reward numeric,
+    cap numeric,
+    total_stake numeric,
+    free_stake numeric,
+    releasing_stake numeric,
+    Primary Key(pid, owner_address)
+);
+
+drop table phala_stake_pool;
+create table phala_stake_pool (
+    pid int,
+    worker_pubkey varchar(1000),
+    worker_binding varchar(1000),
+    Primary Key(pid, worker_pubkey)
+);
+
+drop table phala_mining_miners;
+create table phala_mining_miners (
+    worker_pubkey varchar(1000),
+    state varchar(100),
+    p_init int,
+    p_instant int,
+    total_reward numeric,
+    Primary Key(worker_pubkey)
+);
+
