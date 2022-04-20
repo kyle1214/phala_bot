@@ -85,9 +85,12 @@ def start(update: Update, context: CallbackContext) -> int:
     """Start the conversation, display any stored data and ask user for input."""
     user = update.message.from_user
     reply_text = ''
+    chat_id = update.message.from_user.id
 
-    if context.user_data:
-        reply_text +=  'Your registered worker pubkeyis: \n'
+    pid_list = get_pidlist_by_chatid(chat_id)
+        
+    if pid_list:
+        reply_text +=  "Your registered PID(s): \n"
         for key in context.user_data.keys():
             reply_text += f'\t🧰 {key}\n'
     else:
