@@ -91,7 +91,7 @@ def start(update: Update, context: CallbackContext) -> int:
         
     if pid_list:
         reply_text +=  "Your registered PID(s): \n"
-        for key in context.user_data.keys():
+        for key in pid_list:
             reply_text += f'\t🧰 {key}\n'
     else:
         reply_text += f'Hello {user.first_name}\nWelcome to Phala miner check bot Provided by SubStake✨ \n\n'
