@@ -27,7 +27,7 @@ def get_account_balance(acount_address):
 
 def get_current_price() -> list:
 
-    headers = {
+    headers = { 
       'accept': 'application/json',
     }
     url = f'https://api.coingecko.com/api/v3/simple/price?ids=pha&vs_currencies=usd'
