@@ -494,7 +494,7 @@ def send_status_notification():
         
         d = datetime.datetime.now()
         interval = d.minute % 10
-        logging.info(f"send_status_notification:{chat_id}:time:{d}:mins:{d.minute}:{interval}")
+        logging.info(f"before_send_status_notification:{chat_id}:time:{d}:mins:{d.minute}:{interval}:{msg_text}")
         if interval == 0 and not msg_text == '': 
             text = "🔔 Status Change Alert 🔔\n"
             text += " \n" 
