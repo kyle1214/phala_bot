@@ -488,8 +488,23 @@ def send_status_notification():
                     msg_text += f" 🌀 PID: {pid}\n"
                     msg_text += "--\n"
                     msg_text += f" ⛏️ Worker: {short_addr(miner)}\n"
-                    msg_text += f" 🌡️ P Instant: {p_instant}\n"
-                    msg_text += f" ⚙️ Current Status: {status}\n"
+                    
+                    if p_instant == 0:
+                        msg_text += f" 🌡️ P Instant: {p_instant} 💥\n"
+                    else:
+                        msg_text += f" 🌡️ P Instant: {p_instant}\n"
+                    if status == 'MiningIdle':
+                        status = 'Mining '
+                        emoji = '🟢'
+                    elif status == 'MiningUnresponsive':
+                        status = "Unresponsive "
+                        emoji = '🔴'
+                    elif status == "MiningCoolingDown":
+                        status = "CoolingDown "
+                        emoji = '🔵'
+                    else:
+                        emoji = ''
+                    msg_text += f" ⚙️ Current Status: {emoji} {status}\n"
                     
                     msg_text += "------\n\n"
         
