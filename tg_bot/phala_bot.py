@@ -444,6 +444,7 @@ def set_register_notify(update: Update, context: CallbackContext) -> int:
         reply_text += f"💬 Bot will notify you when..\n"
         reply_text += f"\t👉 Miner status is changed to Not Mining.\n"
         reply_text += f"\t👉 P Instant value is changed to \"0\".\n"
+        reply_text += f""
         reply_text += "---------\n"
         
     elif on_off.startswith("Of"):
@@ -493,12 +494,12 @@ def send_status_notification():
         
         d = datetime.datetime.now()
         interval = d.minute % 10
-        logging.info(f"send_status_notification:{chat_id}:{pid}:time:{d}:mins:{d.minute}:{interval}")
+        logging.info(f"send_status_notification:{chat_id}:time:{d}:mins:{d.minute}:{interval}")
         if interval == 0 and not msg_text == '': 
             text = "🔔 Status Change Alert 🔔\n"
             text += " \n" 
             text += msg_text
-            logging.info(f"🔔send_status_notification:{chat_id}:{pid}:time:{d}:mins:{d.minute}:{interval}:\n{msg_text}")                    
+            logging.info(f"🔔send_status_notification:{chat_id}:time:{d}:mins:{d.minute}:{interval}:\n{msg_text}")                    
             #BOT.send_message(chat_id=chat_id,text=text)
 
 
