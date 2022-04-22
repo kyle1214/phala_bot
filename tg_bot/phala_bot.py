@@ -334,10 +334,19 @@ def worker_status(update: Update, context: CallbackContext) -> int:
                 p_instant = result.get('p_instant')
                 mined = float(result.get('total_reward')) / 10**12
                 mined = '{:.3f}'.format(float(mined))
+                mining_start_time = result.get('mining_start_time')
+                challenge_time_last = result.get('challenge_time_last')
+                cool_down_start = result.get('cool_down_start')
+                
                 logging.info(f"worker_status::{status}:{p_instant}:{mined}")
                 reply_text += f" 🔐 {short_addr2(worker_pubkey)}\n"
                 reply_text += f" {emoji} Status : {status}\n"
                 reply_text += f" 🌡️ P_inst : {p_instant}\n"
+                print(cool_down_start)
+                if not cool_down_start == 0:
+                    #reply_text += f" 🕰️ Last mining time : {datetime.datetime.fromtimestamp(challenge_time_last)}\n"
+                #else:
+                    reply_text += f" 🕰️ Cool down started : {datetime.datetime.fromtimestamp(cool_down_start)}\n"
                 reply_text += f" ⚒️ Mined : {mined} PHA\n\n"
             else :
                 reply_text = ' 🕐 Miner information is not updated yet. Please try again 5 mins later.\n\n'

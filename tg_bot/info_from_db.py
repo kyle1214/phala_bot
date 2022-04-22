@@ -123,7 +123,7 @@ def get_worker_status(worker_pubkey:str):
         conn = common.get_connection()
         with conn:
             with conn.cursor() as cur:
-                query_string = f"SELECT state, p_instant, total_reward from phala_mining_miners WHERE worker_pubkey='{worker_pubkey}' "
+                query_string = f"SELECT state, p_instant, total_reward, mining_start_time, challenge_time_last, cool_down_start from phala_mining_miners WHERE worker_pubkey='{worker_pubkey}' "
 
                 cur.execute(query_string)
                 result = cur.fetchall()
@@ -134,7 +134,10 @@ def get_worker_status(worker_pubkey:str):
                 return_value = {
                     'state': result[0][0],
                     'p_instant': result[0][1],
-                    'total_reward': result[0][2]
+                    'total_reward': result[0][2],
+                    'mining_start_time': result[0][3],
+                    'challenge_time_last': result[0][4],
+                    'cool_down_start': result[0][5]
                 }
 
                 return return_value

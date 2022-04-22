@@ -1,6 +1,7 @@
 from substrateinterface import SubstrateInterface
 import logging
 import common
+import datetime
 
 url = "wss://khala.api.onfinality.io/public-ws"
 substrate = SubstrateInterface(
@@ -65,15 +66,24 @@ def insert_worker_status():
                         storage_function='Miners',
                         params=[miner[0]]
                     )
+
                     worker_pubkey = miner[1]
                     state = result['state']
                     p_init = result['benchmark']['p_init']
                     p_instant = result['benchmark']['p_instant']
                     total_reward = result['stats']['total_reward']
-                    logging.info(f"insert_worker_status:result:{result}")
                     
-                    query_string = f"INSERT INTO phala_mining_miners ( worker_pubkey, state, p_init, p_instant, total_reward ) " \
-                        f"VALUES('{worker_pubkey}', '{state}', {p_init}, {p_instant}, {total_reward})"
+                    mining_start_time = result['benchmark']['mining_start_time'].value
+                    challenge_time_last = result['benchmark']['challenge_time_last'].value
+                    cool_down_start = result['cool_down_start'].value
+                    
+                    logging.info(f"insert_worker_status:result:{result}")
+                    print(f"mining_start_time: {datetime.datetime.fromtimestamp(mining_start_time)}")
+                    print(f"challenge_time_last: {datetime.datetime.fromtimestamp(challenge_time_last)}")
+                    print(f"cool_down_start: {datetime.datetime.fromtimestamp(cool_down_start)}")
+                    
+                    query_string = f"INSERT INTO phala_mining_miners ( worker_pubkey, state, p_init, p_instant, total_reward, mining_start_time, challenge_time_last, cool_down_start ) " \
+                        f"VALUES('{worker_pubkey}', '{state}', {p_init}, {p_instant}, {total_reward}, {mining_start_time}, {challenge_time_last}, {cool_down_start})"
                     logging.info(f"insert_worker_status::{query_string}")
                     cur.execute(query_string)
             conn.commit()

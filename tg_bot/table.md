@@ -40,4 +40,6 @@ create table phala_mining_miners (
     total_reward numeric,
     Primary Key(worker_pubkey)
 );
-
+ALTER TABLE phala_mining_miners ADD COLUMN mining_start_time numeric;
+ALTER TABLE phala_mining_miners ADD COLUMN challenge_time_last numeric;
+ALTER TABLE phala_mining_miners ADD COLUMN cool_down_start numeric;
