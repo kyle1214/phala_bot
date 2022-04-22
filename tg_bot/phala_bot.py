@@ -442,8 +442,8 @@ def set_register_notify(update: Update, context: CallbackContext) -> int:
 
         reply_text += "---------\n"
         reply_text += f"💬 Bot will notify you when..\n"
-        reply_text += f"\t👉 Miner status is changed to Unresponsive.\n"
-        reply_text += f"\t👉 P Instant value is changed to 0.\n"
+        reply_text += f"\t👉 Miner status is changed to \"Not Mining\".\n"
+        reply_text += f"\t👉 P Instant value is changed to \"0\".\n"
         reply_text += "---------\n"
         
     elif on_off.startswith("Of"):
