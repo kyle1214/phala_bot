@@ -415,7 +415,7 @@ def set_notify(update: Update, context: CallbackContext) -> int:
     reply_markup = InlineKeyboardMarkup(inline_keyboard)
     
     update.message.reply_text(
-        text="Please select address which is notification to set.",
+        text="Please select PID which is notification to set.",
         reply_markup=reply_markup
     )
     return NOTIFYING
