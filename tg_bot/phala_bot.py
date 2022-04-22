@@ -1,6 +1,8 @@
 from multiprocessing import pool
 from substrateinterface import SubstrateInterface
 import logging
+import datetime
+import threading
 import worker, common, info_from_db, info_from_subscan
 from telegram import Bot, InputTextMessageContent, ParseMode, ReplyKeyboardMarkup, Update, ReplyKeyboardRemove
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
@@ -273,6 +275,7 @@ def total_balance(update: Update, context: CallbackContext) -> int:
         logging.info(f"get_total_balance:owner_account:{owner_account}")
         if not owner_account in real_account_list:
             real_account_list.append(owner_account)
+    grand_total = 0        
     for owner_account in real_account_list:
         json_result = info_from_subscan.get_account_balance(owner_account)
         total_balance = json_result['data']['account']['balance']
@@ -280,24 +283,26 @@ def total_balance(update: Update, context: CallbackContext) -> int:
         reserved = float(json_result['data']['account']['reserved'])/10**12
         free_balance = float(total_balance) - float(balance_lock) -  float(reserved)
         total_amount = float(total_balance) * float(curr_price)
-        
-        total_balance = '{:.3f}'.format(float(total_balance))
-        balance_lock = '{:.3f}'.format(float(balance_lock))
-        reserved = '{:.3f}'.format(float(reserved))
-        free_balance = '{:.3f}'.format(float(free_balance))
-        total_amount = '{:.3f}'.format(float(total_amount))
+        grand_total += total_amount
+        total_balance = '{:.2f}'.format(float(total_balance))
+        balance_lock = '{:.2f}'.format(float(balance_lock))
+        reserved = '{:.2f}'.format(float(reserved))
+        free_balance = '{:.2f}'.format(float(free_balance))
+        total_amount = '{:.2f}'.format(float(total_amount))
         
         reply_text += f'🧰 {short_addr2(owner_account)} \n'
         reply_text += f'---------\n'
-        reply_text += f' 🛎 Total: {total_balance} \n'
-        reply_text += f' 🔒 Locked: {balance_lock} \n'
-        reply_text += f' 🔒 Reserved: {reserved} \n'
-        reply_text += f' 💰 Free: {free_balance} \n'
+        reply_text += f' 🛎 Total: {total_balance} PHA\n'
+        reply_text += f' 🔒 Locked: {balance_lock} PHA\n'
+        reply_text += f' 🔒 Reserved: {reserved} PHA\n'
+        reply_text += f' 💰 Free: {free_balance} PHA\n'
         reply_text += f' 🚀 Price: ${curr_price} \n'
         reply_text += f'--\n'
-        reply_text += f' 💵 Total_amount: ${total_amount} \n'
-        reply_text += f'---------\n'
+        reply_text += f' 💵 Amount: ${total_amount} \n'
+        reply_text += f'---------\n\n'
         
+    grand_total = '{:.3f}'.format(float(grand_total))
+    reply_text += f' 💸 Total Amount: ${grand_total}\n'
     update.message.reply_text(reply_text, reply_markup=get_ref_url_inlinebutton())    
     return TYPING_SEARCHING
 
@@ -385,13 +390,112 @@ def pool_info(update: Update, context: CallbackContext) -> int:
     return TYPING_SEARCHING   
 
 def set_notify(update: Update, context: CallbackContext) -> int:
-    reply_text = '📣 Notify function will be added soon 📣 \n'
-    reply_text += ' 최대한 빨리 추가하겠습니다..쫌만 쉴게요...😴😴😴 \n'
-    
+    inline_keyboard = []
     chat_id = update.message.from_user.id
+
+    pid_list = get_pidlist_by_chatid(chat_id)
+    for pid in pid_list:
+        notify_bool = info_from_db.get_user_notify_info(chat_id, pid)
+        logging.info(f'set_noti_on::notify_bool:{bool(notify_bool)}:chat_id:{chat_id}:{pid}')
+ 
+        if notify_bool:
+            keyboard_text = f'\t🟢{pid}'
+            keyboard = [InlineKeyboardButton(keyboard_text, callback_data=f'Of_{pid}'),]
+        else:
+            keyboard_text = f'\t🔴{pid}'
+            keyboard = [InlineKeyboardButton(keyboard_text, callback_data=f'On_{pid}'),]
+        
+        inline_keyboard.append(keyboard)
+        
+    inline_keyboard.append(
+            [
+                InlineKeyboardButton("All On", callback_data='On_All'),
+                InlineKeyboardButton("All Off", callback_data='Of_All'),
+            ])
+    reply_markup = InlineKeyboardMarkup(inline_keyboard)
     
-    update.message.reply_text(reply_text, reply_markup=get_ref_url_inlinebutton())
-    return TYPING_SEARCHING  
+    update.message.reply_text(
+        text="Please select address which is notification to set.",
+        reply_markup=reply_markup
+    )
+    return NOTIFYING
+
+def set_register_notify(update: Update, context: CallbackContext) -> int:
+    query = update.callback_query
+    query.answer()
+    
+    chat_id = query.from_user.id
+    pid = query.data[3:]
+    on_off = query.data[0:2]
+    logging.info(f'set_noti_on::chat_id:{chat_id}:{on_off}:{pid}')
+    reply_text = '👀 Registered PID for Notification :\n--\n'
+    
+    if on_off.startswith("On") :
+        if pid.startswith("All"):
+            pid_list = get_pidlist_by_chatid(chat_id)
+            for pid_key in pid_list:
+                info_from_db.set_user_notify_info(chat_id, pid_key, True)
+                reply_text += f"🌀 PID : {pid_key}\n"
+        else :
+            info_from_db.set_user_notify_info(chat_id, pid, True)
+            reply_text += f"🌀 PID : {pid}\n"
+
+        reply_text += "---------\n"
+        reply_text += f"💬 Bot will notify you when..\n"
+        reply_text += f"\t👉 Miner status is changed to Unresponsive.\n"
+        reply_text += f"\t👉 P Instant value is changed to 0.\n"
+        reply_text += "---------\n"
+        
+    elif on_off.startswith("Of"):
+        if pid.startswith("All"):
+            pid_list = get_pidlist_by_chatid(chat_id)
+            for pid_key in pid_list:
+                info_from_db.set_user_notify_info(chat_id, pid_key, False)
+                reply_text += f"🌀 PID : {pid_key}\n"
+        else:
+            info_from_db.set_user_notify_info(chat_id, pid, False)
+            reply_text += f"🌀 PID : {pid}\n"
+    
+        reply_text += "---------\n"
+        reply_text += f"💬 ❗Bot will NOT Notify❗ \n"
+        reply_text += "---------\n"   
+    
+    query.edit_message_text(
+        text=reply_text
+    )
+    
+    return TYPING_SEARCHING
+
+def send_status_notification():
+    msg_text = "🔔 Status Change Alert 🔔\n"
+    msg_text += "--\n"
+    chat_id_list = info_from_db.get_all_registered_chat_id()
+    for chat_id in chat_id_list:
+        pid_list = info_from_db.get_noti_pid_from_chat_id(chat_id)
+        for pid in pid_list:
+            pid = pid[0]
+            #msg_text += f"{pid}\n"
+            miner_list = info_from_db.get_worker_pubkey_by_pid(pid)
+            for miner in miner_list:
+                miner = miner[0]
+                miner_status_list = info_from_db.get_noti_worker_status(miner)
+                for miner_status in miner_status_list:
+                    status = miner_status[0]
+                    p_instant = miner_status[1]
+                    
+                    msg_text += f" 🌀 PID: {pid}\n"
+                    msg_text += f" ⛏️ Worker: {short_addr(miner)}\n"
+                    msg_text += f" 🌡️ P Instant: {p_instant}\n"
+                    msg_text += f" ⚙️ Current Status: {status}\n"
+                    
+        msg_text += "------\n"
+        
+        d = datetime.datetime.now()
+        interval = d.minute % 10
+        logging.info(f"send_status_notification:time:{d}:mins:{d.minute}:{interval}")
+        if interval == 0:                      
+            BOT.send_message(chat_id=chat_id,text=msg_text)
+
 
 def main() -> None:
     """Run the bot."""        
@@ -404,6 +508,9 @@ def main() -> None:
     # Check updataed data and send notification using Thread.
     global BOT
     BOT = updater.bot
+    
+    notify_thread = threading.Thread(target=send_status_notification)
+    notify_thread.start()
     
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
@@ -449,14 +556,13 @@ def main() -> None:
                 MessageHandler(Filters.regex('^Back🔙$'),start),
             ],
             NOTIFYING: [
-                #CallbackQueryHandler(set_register_notify, pattern='^On_|^Of_'),
+                CallbackQueryHandler(set_register_notify, pattern='^On_|^Of_'),
                 MessageHandler(Filters.regex('^Back🔙$'),start),
-                #MessageHandler(Filters.regex('^Notify⏰$'),set_notify),
-                #MessageHandler(Filters.regex('start'), start),
-                #MessageHandler(Filters.regex('^Total Balance$'),total_balance),
-                #MessageHandler(Filters.regex('^Recent Rewards$'),recent_rewards),
-                #MessageHandler(Filters.regex('^Delegation Status$'),delegation_status),
-                #MessageHandler(Filters.regex('^Collator Status$'),collator_status),
+                MessageHandler(Filters.regex('^Set Notify$'),set_notify),
+                MessageHandler(Filters.regex('start'), start),
+                MessageHandler(Filters.regex('^Total Balance$'),total_balance),
+                MessageHandler(Filters.regex('^Worker Status$'),worker_status),
+                MessageHandler(Filters.regex('^Pool Info$'),pool_info),
             ]
         },
         fallbacks=[MessageHandler(Filters.regex('^Support🆘$'), support)],

@@ -4,8 +4,11 @@ drop table phala_user_pid;
 create table phala_user_pid (
     chat_id int,
     pid int,
+    notify boolean
     Primary Key(chat_id, pid)
 );
+ALTER TABLE phala_user_pid ADD COLUMN notify boolean;
+
 
 drop table phala_pid_owner_info;
 create table phala_pid_owner_info (

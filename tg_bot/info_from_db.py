@@ -1,5 +1,6 @@
 import logging
 import math
+from xmlrpc.client import Boolean
 import common
 
 logging.basicConfig(
@@ -171,4 +172,75 @@ def get_pool_info(pid:str):
         raise e
     finally:
         conn.close()
-    
+
+def get_user_notify_info(chat_id:int, pid:int) -> bool:
+    conn = common.get_connection()
+    with conn:
+        with conn.cursor() as cur:
+            query_string = f"SELECT notify FROM phala_user_pid WHERE chat_id={chat_id} AND pid={pid}"
+            cur.execute(query_string)
+            notify_info = cur.fetchone()
+            if notify_info == None:
+                return False
+            else:
+                notify_info = bool(notify_info[0])
+    return notify_info
+
+def set_user_notify_info(chat_id:int, pid:int, notify:Boolean):
+    conn = common.get_connection()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                query_string = f"UPDATE phala_user_pid SET notify = {notify} " \
+                        f"WHERE chat_id = {chat_id} AND pid = {pid}"
+                cur.execute(query_string)
+            conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        conn.close()
+        
+def get_all_registered_chat_id():
+    conn = common.get_connection()
+    with conn:
+        with conn.cursor() as cur:
+            query_string = f"SELECT DISTINCT chat_id FROM phala_user_pid"
+            cur.execute(query_string)
+            result = cur.fetchall()
+            tmp = []
+            for row in result:
+                chat_id = row[0]
+                tmp.append(chat_id)
+    conn.close()
+    return tmp
+
+def get_noti_pid_from_chat_id(chat_id:int):
+    try:
+        conn = common.get_connection()
+        with conn:
+            with conn.cursor() as cur:
+                query_string = f"SELECT pid from phala_user_pid WHERE chat_id={chat_id} AND notify=True"
+                cur.execute(query_string)
+                pid_list = cur.fetchall()
+                
+                return pid_list
+    except Exception as e:
+        raise e
+    finally:
+        conn.close()
+
+def get_noti_worker_status(worker_pubkey:str):
+    try:
+        conn = common.get_connection()
+        with conn:
+            with conn.cursor() as cur:
+                query_string = f"SELECT state, p_instant from phala_mining_miners WHERE worker_pubkey='{worker_pubkey}' AND state != 'MiningIdle'"
+                cur.execute(query_string)
+                pid_list = cur.fetchall()
+                
+                return pid_list
+    except Exception as e:
+        raise e
+    finally:
+        conn.close()
