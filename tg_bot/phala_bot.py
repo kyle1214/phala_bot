@@ -480,7 +480,7 @@ def send_status_notification():
             for miner in miner_list:
                 miner = miner[0]
                 miner_status_list = info_from_db.get_noti_worker_status(miner)
-                logging.info(f"send_status_notification:miner_status_list:{miner_status_list}:{miner}")
+                #logging.info(f"send_status_notification:miner_status_list:{miner_status_list}:{miner}")
                 for miner_status in miner_status_list:
                     status = miner_status[0]
                     p_instant = miner_status[1]
@@ -501,7 +501,7 @@ def send_status_notification():
             text += " \n" 
             text += msg_text
             logging.info(f"🔔send_status_notification:{chat_id}:time:{d}:mins:{d.minute}:{interval}:\n{msg_text}")                    
-            #BOT.send_message(chat_id=chat_id,text=text)
+            BOT.send_message(chat_id=chat_id,text=text)
 
 
 def main() -> None:
