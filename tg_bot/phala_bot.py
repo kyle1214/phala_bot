@@ -488,7 +488,7 @@ def send_status_notification():
                     msg_text += f" 🌡️ P Instant: {p_instant}\n"
                     msg_text += f" ⚙️ Current Status: {status}\n"
                     
-        msg_text += "------\n"
+                    msg_text += "------\n\n"
         
         d = datetime.datetime.now()
         interval = d.minute % 10
