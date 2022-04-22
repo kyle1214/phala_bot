@@ -442,7 +442,7 @@ def set_register_notify(update: Update, context: CallbackContext) -> int:
 
         reply_text += "---------\n"
         reply_text += f"💬 Bot will notify you when..\n"
-        reply_text += f"\t👉 Miner status is changed to \"Not Mining\".\n"
+        reply_text += f"\t👉 Miner status is changed to Not Mining.\n"
         reply_text += f"\t👉 P Instant value is changed to \"0\".\n"
         reply_text += "---------\n"
         
@@ -467,10 +467,10 @@ def set_register_notify(update: Update, context: CallbackContext) -> int:
     return TYPING_SEARCHING
 
 def send_status_notification():
-    msg_text = "🔔 Status Change Alert 🔔\n"
-    msg_text += "--\n"
+    
     chat_id_list = info_from_db.get_all_registered_chat_id()
     for chat_id in chat_id_list:
+        msg_text = ''
         pid_list = info_from_db.get_noti_pid_from_chat_id(chat_id)
         for pid in pid_list:
             pid = pid[0]
@@ -484,6 +484,7 @@ def send_status_notification():
                     p_instant = miner_status[1]
                     
                     msg_text += f" 🌀 PID: {pid}\n"
+                    msg_text += "--\n"
                     msg_text += f" ⛏️ Worker: {short_addr(miner)}\n"
                     msg_text += f" 🌡️ P Instant: {p_instant}\n"
                     msg_text += f" ⚙️ Current Status: {status}\n"
@@ -493,8 +494,12 @@ def send_status_notification():
         d = datetime.datetime.now()
         interval = d.minute % 10
         logging.info(f"send_status_notification:{chat_id}:{pid}:time:{d}:mins:{d.minute}:{interval}")
-        if interval == 0:                      
-            BOT.send_message(chat_id=chat_id,text=msg_text)
+        if interval == 0 and not msg_text == '': 
+            text = "🔔 Status Change Alert 🔔\n"
+            text += " \n" 
+            text += msg_text
+            logging.info(f"🔔send_status_notification:{chat_id}:{pid}:time:{d}:mins:{d.minute}:{interval}:\n{msg_text}")                    
+            #BOT.send_message(chat_id=chat_id,text=text)
 
 
 def main() -> None:
@@ -510,7 +515,7 @@ def main() -> None:
     BOT = updater.bot
     
     notify_thread = threading.Thread(target=send_status_notification)
-    #notify_thread.start()
+    notify_thread.start()
     
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
