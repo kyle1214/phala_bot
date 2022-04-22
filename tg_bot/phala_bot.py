@@ -510,7 +510,7 @@ def main() -> None:
     BOT = updater.bot
     
     notify_thread = threading.Thread(target=send_status_notification)
-    notify_thread.start()
+    #notify_thread.start()
     
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
