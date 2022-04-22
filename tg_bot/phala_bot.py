@@ -493,7 +493,7 @@ def send_status_notification():
         d = datetime.datetime.now()
         interval = d.minute % 10
         logging.info(f"send_status_notification:{chat_id}:{pid}:time:{d}:mins:{d.minute}:{interval}")
-        if not interval == 0:                      
+        if interval == 0:                      
             BOT.send_message(chat_id=chat_id,text=msg_text)
 
 
