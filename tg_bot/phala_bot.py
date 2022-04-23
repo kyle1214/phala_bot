@@ -340,14 +340,23 @@ def worker_status(update: Update, context: CallbackContext) -> int:
                 
                 logging.info(f"worker_status::{status}:{p_instant}:{mined}")
                 reply_text += f" 🔐 {short_addr2(worker_pubkey)}\n"
+                
+                current_time = datetime.datetime.utcnow()
+                start_time = datetime.datetime.fromtimestamp(mining_start_time)
+                time_gap = current_time - start_time
+                reply_text += f" 🔥 Mining started : {time_gap.days} days {int(time_gap.seconds / 3600)} hours ago\n"
+                
+                if not cool_down_start == 0:
+                    cooldown_time_gap = current_time - datetime.datetime.fromtimestamp(cool_down_start)
+                    reply_text += f" ❄️ Cool down started : {cooldown_time_gap.days} days {int(cooldown_time_gap.seconds / 3600)} hours ago\n"
+                    
                 reply_text += f" {emoji} Status : {status}\n"
                 reply_text += f" 🌡️ P_inst : {p_instant}\n"
-                print(cool_down_start)
-                if not cool_down_start == 0:
-                    #reply_text += f" 🕰️ Last mining time : {datetime.datetime.fromtimestamp(challenge_time_last)}\n"
-                #else:
-                    reply_text += f" 🕰️ Cool down started : {datetime.datetime.fromtimestamp(cool_down_start)}\n"
+
+                
+                
                 reply_text += f" ⚒️ Mined : {mined} PHA\n\n"
+                
             else :
                 reply_text = ' 🕐 Miner information is not updated yet. Please try again 5 mins later.\n\n'
             
