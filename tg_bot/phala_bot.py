@@ -417,10 +417,10 @@ def set_notify(update: Update, context: CallbackContext) -> int:
         logging.info(f'set_noti_on::notify_bool:{bool(notify_bool)}:chat_id:{chat_id}:{pid}')
  
         if notify_bool:
-            keyboard_text = f'\t🟢{pid}'
+            keyboard_text = f'\t🟢 {pid}'
             keyboard = [InlineKeyboardButton(keyboard_text, callback_data=f'Of_{pid}'),]
         else:
-            keyboard_text = f'\t🔴{pid}'
+            keyboard_text = f'\t🔴 {pid}'
             keyboard = [InlineKeyboardButton(keyboard_text, callback_data=f'On_{pid}'),]
         
         inline_keyboard.append(keyboard)
