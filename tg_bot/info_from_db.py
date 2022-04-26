@@ -28,6 +28,8 @@ def insert_pid_owner_info(pool_id:int, owner_address:str, commission:int, owner_
             with conn.cursor() as cur:
                 if cap == None:
                     cap = -1
+                if commission == None:
+                    commission = 0
                 query_string = f"INSERT INTO phala_pid_owner_info ( pid, owner_address, commission, owner_reward, cap, total_stake, free_stake, releasing_stake )" \
                         f"VALUES({pool_id}, '{owner_address}', {commission}, {owner_reward}, {cap}, {total_stake}, {free_stake}, {releasing_stake})"
                 cur.execute(query_string)

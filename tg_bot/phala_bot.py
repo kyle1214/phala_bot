@@ -577,7 +577,6 @@ def main() -> None:
                     Filters.text & ~(Filters.command | Filters.regex('^Support🆘$')),
                     received_information,
                 ),
-                
             ],
             DELETING: [ 
                 MessageHandler(Filters.regex('start'), start),
