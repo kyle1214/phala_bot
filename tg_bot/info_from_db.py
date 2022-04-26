@@ -46,7 +46,9 @@ def insert_phala_stake_pool(pid:int, worker_pubkey:str):
         with conn:
             with conn.cursor() as cur:
                 query_string = f"INSERT INTO phala_stake_pool ( pid, worker_pubkey )" \
-                        f"VALUES({pid}, '{worker_pubkey}')"
+                        f"VALUES({pid}, '{worker_pubkey}') " \
+                        f"ON CONFLICT (pid, worker_pubkey) " \
+                        f"DO UPDATE SET pid = {pid}, worker_pubkey = '{worker_pubkey}'"
                 cur.execute(query_string)
             conn.commit()
     except Exception as e:
