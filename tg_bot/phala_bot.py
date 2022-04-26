@@ -70,9 +70,11 @@ def error_handler(update: object, context: CallbackContext) -> int:
     logging.error(msg=f'Exception while handling an update:[{update.message.from_user.first_name}][{update.message.from_user.id}]', exc_info=context.error)
     
     message = (
-        f'An exception was raised while prcessing\n'
-        f'Please /start bot again'
+        f'Phala bot is maintance mod now.\n'
+        f'Please try again 3 hrs later.'
     )
+    
+
     keyboard = [
         ["/start","Support🆘"]
     ]
