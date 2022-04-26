@@ -32,7 +32,7 @@ def insert_pid_owner_info(pool_id:int, owner_address:str, commission:int, owner_
                     commission = 0
                 query_string = f"INSERT INTO phala_pid_owner_info ( pid, owner_address, commission, owner_reward, cap, total_stake, free_stake, releasing_stake )" \
                         f"VALUES({pool_id}, '{owner_address}', {commission}, {owner_reward}, {cap}, {total_stake}, {free_stake}, {releasing_stake})" \
-                        f"ON CONFLICT ( pid, owner_address, commission, owner_reward, cap, total_stake, free_stake, releasing_stake ) " \
+                        f"ON CONFLICT ( pid, owner_address ) " \
                         f"DO UPDATE SET  pid = {pool_id}, owner_address='{owner_address}', commission={commission}, owner_reward={owner_reward}, cap={cap}, total_stake={total_stake}, free_stake={free_stake}, releasing_stake={releasing_stake} "
                 cur.execute(query_string)
             conn.commit()
