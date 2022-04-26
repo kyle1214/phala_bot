@@ -122,6 +122,8 @@ def insert_pool_info():
                     worker_list = result['workers']
                     if cap == None:
                         cap = -1
+                    if commission == None:
+                        commission = 0
                     query_string = f"INSERT INTO phala_pid_owner_info ( pid, owner_address, commission, owner_reward, cap, total_stake, free_stake, releasing_stake )" \
                             f"VALUES({pool_id}, '{owner_address}', {commission}, {owner_reward}, {cap}, {total_stake}, {free_stake}, {releasing_stake})"
 
