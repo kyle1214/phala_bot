@@ -31,7 +31,9 @@ def insert_pid_owner_info(pool_id:int, owner_address:str, commission:int, owner_
                 if commission == None:
                     commission = 0
                 query_string = f"INSERT INTO phala_pid_owner_info ( pid, owner_address, commission, owner_reward, cap, total_stake, free_stake, releasing_stake )" \
-                        f"VALUES({pool_id}, '{owner_address}', {commission}, {owner_reward}, {cap}, {total_stake}, {free_stake}, {releasing_stake})"
+                        f"VALUES({pool_id}, '{owner_address}', {commission}, {owner_reward}, {cap}, {total_stake}, {free_stake}, {releasing_stake})" \
+                        f"ON CONFLICT ( pid, owner_address, commission, owner_reward, cap, total_stake, free_stake, releasing_stake ) " \
+                        f"DO UPDATE SET  pid = {pool_id}, owner_address='{owner_address}', commission={commission}, owner_reward={owner_reward}, cap={cap}, total_stake={total_stake}, free_stake={free_stake}, releasing_stake={releasing_stake} "
                 cur.execute(query_string)
             conn.commit()
     except Exception as e:
@@ -93,12 +95,12 @@ def del_user_pid_info(pid:int):
         conn = common.get_connection()
         with conn:
             with conn.cursor() as cur:
-                query_string = f"DELETE FROM phala_stake_pool WHERE  pid = {pid}"
-                cur.execute(query_string)
+                #query_string = f"DELETE FROM phala_stake_pool WHERE  pid = {pid}"
+                #cur.execute(query_string)
                 query_string = f"DELETE FROM phala_user_pid WHERE  pid = {pid}"
                 cur.execute(query_string)
-                query_string = f"DELETE FROM phala_pid_owner_info WHERE  pid = {pid}"
-                cur.execute(query_string)
+                #query_string = f"DELETE FROM phala_pid_owner_info WHERE  pid = {pid}"
+                #cur.execute(query_string)
                 
             conn.commit()
     except Exception as e:
