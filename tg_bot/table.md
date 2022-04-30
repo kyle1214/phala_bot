@@ -2,12 +2,14 @@
 
 drop table phala_user_pid;
 create table phala_user_pid (
-    chat_id int,
+    chat_id numeric,
     pid int,
-    notify boolean
+    notify boolean,
     Primary Key(chat_id, pid)
 );
 ALTER TABLE phala_user_pid ADD COLUMN notify boolean;
+ALTER TABLE phala_user_pid ALTER COLUMN chat_id TYPE numeric;
+
 
 
 drop table phala_pid_owner_info;
@@ -19,8 +21,7 @@ create table phala_pid_owner_info (
     cap numeric,
     total_stake numeric,
     free_stake numeric,
-    releasing_stake numeric,
-    Primary Key(pid, owner_address)
+    releasing_stake numeric
 );
 
 drop table phala_stake_pool;

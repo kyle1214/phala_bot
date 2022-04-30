@@ -537,7 +537,7 @@ def send_status_notification():
             text += " \n" 
             text += msg_text
             logging.info(f"🔔send_status_notification:{chat_id}:time:{d}:mins:{d.minute}:{interval}:\n{msg_text}")                    
-            BOT.send_message(chat_id=chat_id,text=text)
+            BOT.send_message(chat_id=str(chat_id),text=text)
 
 
 def main() -> None:
