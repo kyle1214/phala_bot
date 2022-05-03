@@ -40,7 +40,7 @@ def update_phala_stake_pool_info():
                         worker_binding = result
                         query_string = f"INSERT INTO phala_stake_pool ( pid, worker_pubkey, worker_binding ) VALUES({pid[0]},'{worker_pubkey}', '{worker_binding}')" \
                                     f"ON CONFLICT ( pid, worker_pubkey ) " \
-                                    f"DO UPDATE SET  worker_binding = {worker_binding}" 
+                                    f"DO UPDATE SET  worker_binding = '{worker_binding}'" 
                         logging.info(f"update_phala_stake_pool_info::{query_string}")
                         cur.execute(query_string)
             conn.commit()
