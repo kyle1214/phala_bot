@@ -36,7 +36,7 @@ def update_phala_stake_pool_info():
                             storage_function='WorkerBindings',
                             params=[worker_pubkey.value]
                         )
-                        print(result)
+
                         worker_binding = result
                         query_string = f"INSERT INTO phala_stake_pool ( pid, worker_pubkey, worker_binding ) VALUES({pid[0]},'{worker_pubkey}', '{worker_binding}')" \
                                     f"ON CONFLICT ( pid, worker_pubkey ) " \
