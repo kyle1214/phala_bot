@@ -464,7 +464,7 @@ def set_register_notify(update: Update, context: CallbackContext) -> int:
         reply_text += "---------\n"
         reply_text += f"💬 Bot will notify you when..\n"
         reply_text += f"\t👉 Miner status is changed to Not Mining.\n"
-        reply_text += f"\t👉 P Instant value is changed to \"0\".\n"
+        #reply_text += f"\t👉 P Instant value is changed to \"0\".\n"
         reply_text += f""
         reply_text += "---------\n"
         
@@ -510,10 +510,10 @@ def send_status_notification():
                     msg_text += "--\n"
                     msg_text += f" ⛏️ Worker: {short_addr(miner)}\n"
                     
-                    if p_instant == 0:
-                        msg_text += f" 🌡️ P Instant: {p_instant} 💥\n"
-                    else:
-                        msg_text += f" 🌡️ P Instant: {p_instant}\n"
+                    #if p_instant == 0:
+                    #    msg_text += f" 🌡️ P Instant: {p_instant} 💥\n"
+                    #else:
+                    #    msg_text += f" 🌡️ P Instant: {p_instant}\n"
                     if status == 'MiningIdle':
                         status = 'Mining '
                         emoji = '🟢'
