@@ -361,7 +361,7 @@ def worker_status(update: Update, context: CallbackContext) -> int:
                 reply_text += f" ⚒️ Mined : {mined} PHA\n\n"
                 
             else :
-                reply_text = ' 🕐 Miner information is not updated yet. Please try again 5 mins later.\n\n'
+                reply_text = ' 🕐 Miner information is not updated yet. Please try again 10 mins later.\n\n'
             
     update.message.reply_text(reply_text, reply_markup=get_ref_url_inlinebutton())
     return TYPING_SEARCHING        
