@@ -514,15 +514,15 @@ def send_status_notification():
                     #    msg_text += f" 🌡️ P Instant: {p_instant} 💥\n"
                     #else:
                     #    msg_text += f" 🌡️ P Instant: {p_instant}\n"
-                    if status == 'MiningIdle':
-                        status = 'Mining '
-                        emoji = '🟢'
-                    elif status == 'MiningUnresponsive':
+                    #if status == 'MiningIdle':
+                    #    status = 'Mining '
+                    #    emoji = '🟢'
+                    if status == 'MiningUnresponsive':
                         status = "Unresponsive "
                         emoji = '🔴'
-                    elif status == "MiningCoolingDown":
-                        status = "CoolingDown "
-                        emoji = '🔵'
+                    #elif status == "MiningCoolingDown":
+                    #    status = "CoolingDown "
+                    #    emoji = '🔵'
                     else:
                         emoji = ''
                     msg_text += f" ⚙️ Current Status: {emoji} {status}\n"
