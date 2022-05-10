@@ -504,7 +504,7 @@ def send_status_notification():
                 #logging.info(f"send_status_notification:miner_status_list:{miner_status_list}:{miner}")
                 for miner_status in miner_status_list:
                     status = miner_status[0]
-                    p_instant = miner_status[1]
+                    #p_instant = miner_status[1]
                     
                     msg_text += f" 🌀 PID: {pid}\n"
                     msg_text += "--\n"

@@ -244,7 +244,7 @@ def get_noti_worker_status(worker_pubkey:str):
         conn = common.get_connection()
         with conn:
             with conn.cursor() as cur:
-                query_string = f"SELECT state, p_instant from phala_mining_miners WHERE worker_pubkey='{worker_pubkey}' AND (state != 'MiningIdle' OR p_instant = 0)"
+                query_string = f"SELECT state, p_instant from phala_mining_miners WHERE worker_pubkey='{worker_pubkey}' AND (state != 'MiningIdle')"
                 cur.execute(query_string)
                 pid_list = cur.fetchall()
                 
