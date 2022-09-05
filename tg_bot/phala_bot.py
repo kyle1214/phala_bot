@@ -347,23 +347,28 @@ def worker_status(update: Update, context: CallbackContext) -> int:
                 current_time = datetime.datetime.utcnow()
                 start_time = datetime.datetime.fromtimestamp(mining_start_time)
                 time_gap = current_time - start_time
-                reply_text += f" 🔥 Mining started : {time_gap.days} days {int(time_gap.seconds / 3600)} hours ago\n"
+                #reply_text += f" 🔥 Mining started : {time_gap.days} days {int(time_gap.seconds / 3600)} hours ago\n"
                 
                 if not cool_down_start == 0:
                     cooldown_time_gap = current_time - datetime.datetime.fromtimestamp(cool_down_start)
                     reply_text += f" ❄️ Cool down started : {cooldown_time_gap.days} days {int(cooldown_time_gap.seconds / 3600)} hours ago\n"
                     
-                reply_text += f" {emoji} Status : {status}\n"
-                reply_text += f" 🌡️ P_inst : {p_instant}\n"
+                reply_text += f" {emoji} Status : {status}\n\n"
+                #reply_text += f" 🌡️ P_inst : {p_instant}\n"
 
                 
                 
-                reply_text += f" ⚒️ Mined : {mined} PHA\n\n"
+                #reply_text += f" ⚒️ Mined : {mined} PHA\n\n"
                 
             else :
                 reply_text = ' 🕐 Miner information is not updated yet. Please try again 10 mins later.\n\n'
-            
-    update.message.reply_text(reply_text, reply_markup=get_ref_url_inlinebutton())
+    if len(reply_text) > 4096:
+        for x in range(0, len(reply_text), 4096):
+            update.message.reply_text(reply_text[x:x+4096])
+    else:
+        update.message.reply_text(reply_text, reply_markup=get_ref_url_inlinebutton())
+               
+    
     return TYPING_SEARCHING        
 
 def pool_info(update: Update, context: CallbackContext) -> int:
