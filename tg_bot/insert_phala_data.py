@@ -25,16 +25,17 @@ def update_phala_stake_pool_info():
                 
                 for pid in pid_list:
                     result = substrate.query(
-                        module='PhalaStakePool',
-                        storage_function='StakePools',
+                        module='PhalaBasePool',
+                        storage_function='Pools',
                         params=[pid[0]]
                     )
-                    result_pid = result['workers']
+                    result = result.value
+                    result_pid = result['StakePool']['workers']
                     for worker_pubkey in result_pid:
                         result = substrate.query(
-                            module='PhalaMining',
+                            module='PhalaComputation',
                             storage_function='WorkerBindings',
-                            params=[worker_pubkey.value]
+                            params=[worker_pubkey]
                         )
 
                         worker_binding = result
@@ -64,8 +65,8 @@ def insert_worker_status():
                 
                 for miner in miner_list:
                     result = substrate.query(
-                        module='PhalaMining',
-                        storage_function='Miners',
+                        module='PhalaComputation',
+                        storage_function='Sessions',
                         params=[miner[0]]
                     )
 
@@ -75,7 +76,7 @@ def insert_worker_status():
                     p_instant = result['benchmark']['p_instant']
                     total_reward = result['stats']['total_reward']
                     
-                    mining_start_time = result['benchmark']['mining_start_time'].value
+                    mining_start_time = result['benchmark']['working_start_time'].value
                     challenge_time_last = result['benchmark']['challenge_time_last'].value
                     cool_down_start = result['cool_down_start'].value
                     
@@ -110,24 +111,25 @@ def insert_pool_info():
                     pool_id = pid[0]
                     logging.info(f"insert_pool_info:pid:{pool_id}")
                     result = substrate.query(
-                        module='PhalaStakePool',
-                        storage_function='StakePools',
+                        module='PhalaBasePool',
+                        storage_function='Pools',
                         params=[pool_id]
                     )
-                    owner_address = result['owner'].value
-                    commission = result['payout_commission'].value
-                    owner_reward = result['owner_reward']
-                    cap = result['cap'].value
-                    total_stake = result['total_stake'].value
-                    free_stake = result['free_stake'].value
-                    releasing_stake = result['releasing_stake'].value
-                    worker_list = result['workers']
+                    result = result.value
+                    owner_address = result['StakePool']['basepool']['owner']
+                    commission = result['StakePool']['payout_commission']
+                    #owner_reward = result['owner_reward']
+                    cap = result['StakePool']['cap']
+                    #total_stake = result['total_stake'].value
+                    #free_stake = result['free_stake'].value
+                    #releasing_stake = result['releasing_stake'].value
+                    #worker_list = result['StakePool']['workers']
                     if cap == None:
                         cap = -1
                     if commission == None:
                         commission = 0
-                    query_string = f"INSERT INTO phala_pid_owner_info ( pid, owner_address, commission, owner_reward, cap, total_stake, free_stake, releasing_stake )" \
-                            f"VALUES({pool_id}, '{owner_address}', {commission}, {owner_reward}, {cap}, {total_stake}, {free_stake}, {releasing_stake})"
+                    query_string = f"INSERT INTO phala_pid_owner_info ( pid, owner_address, commission, cap )" \
+                            f"VALUES({pool_id}, '{owner_address}', {commission}, {cap})"
 
                     logging.info(f"insert_pool_info::{query_string}")
                     cur.execute(query_string)

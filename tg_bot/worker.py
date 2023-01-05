@@ -41,8 +41,8 @@ def get_pool_info(pool_id:int):
         url=url
     )   
     result = substrate.query(
-        module='PhalaStakePool',
-        storage_function='StakePools',
+        module='PhalaBasePool',
+        storage_function='Pools',
         params=[pool_id]
     )
     logging.info(f"get_pool_info::{result}")

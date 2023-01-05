@@ -23,7 +23,7 @@ logging.basicConfig(
 CHOICE, REGISTER, DELETING, TYPING_SEARCHING, SEARCHING, TYPING_REPLY, NOTIFYING = range(7)
 
 reply_keyboard = [
-    ['Register🔖','Search🔎'],['Delete⛔','Support🆘']
+    ['Register🔖','Search🔎'],['Delete⛔','Support🆘'] 
 ]
 markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False, resize_keyboard=True)
 
@@ -33,7 +33,7 @@ def get_ref_url_inlinebutton() -> InlineKeyboardMarkup:
         #    InlineKeyboardButton("SubStake.app✨", url='https://substake.app/moonbeam/active')
         #],
         [
-            InlineKeyboardButton("Staking DApp", url='https://app.phala.network/mining/'),
+            InlineKeyboardButton("Staking DApp", url='https://app.phala.network/'),
         ]
     ]       
     return InlineKeyboardMarkup(keyboard)
@@ -160,28 +160,31 @@ def received_information(update: Update, context: CallbackContext) -> int:
         return CHOICE
     
     result = worker.get_pool_info(pool_id)
+
     reply_text = 'Not registered..'
     if not result == None:
-        pool_id = result['pid']
-        owner_address = result['owner'].value
-        commission = result['payout_commission'].value
-        owner_reward = result['owner_reward']
-        cap = result['cap'].value
-        total_stake = result['total_stake'].value
-        free_stake = result['free_stake'].value
-        releasing_stake = result['releasing_stake'].value
-        worker_list = result['workers']
+        result = result.value
+        pool_id = result['StakePool']['basepool']['pid']
+        logging.info(f"get_pool_info:PID:{pool_id}")
+        owner_address = result['StakePool']['basepool']['owner']
+        commission = result['StakePool']['payout_commission']
+        #owner_reward = "" #result['owner_reward']
+        cap = result['StakePool']['cap']
+        total_stake = result['StakePool']['basepool']['total_value']
+        #free_stake = "" #result['free_stake']
+        #releasing_stake = "" #result['releasing_stake']
+        worker_list = result['StakePool']['workers']
         
-        info_from_db.insert_pid_owner_info(pool_id, owner_address, commission, owner_reward, cap, total_stake, free_stake, releasing_stake)
+        info_from_db.insert_pid_owner_info(pool_id, owner_address, commission, cap)
         info_from_db.insert_user_pid(chat_id, pool_id)
         
         reply_text = f" 🌀 PID : {pool_id}\n"
         reply_text += f" 🧰 Owner Address : {short_addr(owner_address)}\n"
         reply_text += f" ⚖️ Commission : {commission/10**4}%\n"
-        reply_text += f" 🖥️ Worker\n"
+        reply_text += f" 🖥️ {len(worker_list)} Workers added in the pool\n"
         for miner in worker_list:
-            reply_text += f"  ⚒️ {short_addr2(miner.value)}\n"
-            info_from_db.insert_phala_stake_pool(pool_id, miner)
+            reply_text += f"  ⚒️ {short_addr2(miner)}\n"
+            #info_from_db.insert_phala_stake_pool(pool_id, miner)
         reply_text += "\n🌟 Pool succefully registered\n"
     update.message.reply_text(
         reply_text,
@@ -374,44 +377,45 @@ def worker_status(update: Update, context: CallbackContext) -> int:
 def pool_info(update: Update, context: CallbackContext) -> int:
     reply_text = ''
     chat_id = update.message.from_user.id
-
+    reply_text += " ⏱️ Pool info function is under developing.\n"
     pid_list = get_pidlist_by_chatid(chat_id)
     total_own_rewards = 0
     for pid in pid_list:
         result = info_from_db.get_pool_info(pid)
         owner_address = result['owner_address']
         commission = result['commission']
-        owner_reward = result['owner_reward']
+        #owner_reward = result['owner_reward']
         cap = result['cap']
-        total_stake = result['total_stake']
-        free_stake = result['free_stake']
-        releasing_stake = result['releasing_stake']
+        #total_stake = result['total_stake']
+        #free_stake = result['free_stake']
+        #releasing_stake = result['releasing_stake']
         
-        total_own_rewards += owner_reward
+        #total_own_rewards += owner_reward
         
         commission = '{:.0f}'.format(float(commission)/10**4)
-        owner_reward = '{:.2f}'.format(float(owner_reward/10**12))
+        #owner_reward = '{:.2f}'.format(float(owner_reward/10**12))
         if cap == -1:
             cap = '∞'
         else:
             cap = '{:.2f}'.format(float(cap/10**12))
-        total_stake = '{:.2f}'.format(float(total_stake/10**12))
-        free_stake = '{:.2f}'.format(float(free_stake/10**12))
-        releasing_stake = '{:.2f}'.format(float(releasing_stake/10**12))
+        #total_stake = '{:.2f}'.format(float(total_stake/10**12))
+        #free_stake = '{:.2f}'.format(float(free_stake/10**12))
+        #releasing_stake = '{:.2f}'.format(float(releasing_stake/10**12))
         
         reply_text += f"🌀 PID : {pid}\n"
         reply_text += f" -- \n"
         reply_text += f" 🧰 {short_addr2(owner_address)}\n"
-        reply_text += f" 🌟 Owner rewards: {owner_reward} PHA \n"
+        #reply_text += f" 🌟 Owner rewards: {owner_reward} PHA \n"
         reply_text += f" ⚖️ Commission: {commission}%\n"
         reply_text += f" 🧢 Cap : {cap} PHA \n"
-        reply_text += f" 🍥 Delegated: {total_stake} PHA \n"
-        reply_text += f" 💰 Free Delegation: {free_stake} PHA \n"
-        reply_text += f" ⏱️ Releasing Stake: {releasing_stake} PHA \n\n"
+        #reply_text += f" 🍥 Delegated: {total_stake} PHA \n"
+        #reply_text += f" 💰 Free Delegation: {free_stake} PHA \n"
+        #reply_text += f" ⏱️ Releasing Stake: {releasing_stake} PHA \n\n"
         
     reply_text += f" -----\n"
-    total_own_rewards = '{:.3f}'.format(float(total_own_rewards/10**12))
-    reply_text += f" 💵 Claimable Rewards: {total_own_rewards} PHA"
+    #total_own_rewards = '{:.3f}'.format(float(total_own_rewards/10**12))
+    #reply_text += f" 💵 Claimable Rewards: {total_own_rewards} PHA"
+    reply_text += "Pool info function is under developing.\n"
     update.message.reply_text(reply_text, reply_markup=get_ref_url_inlinebutton())
     return TYPING_SEARCHING   
 

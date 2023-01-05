@@ -21,7 +21,8 @@ def insert_user_pid(chat_id:int, pool_id:int):
     finally:
         conn.close()
 
-def insert_pid_owner_info(pool_id:int, owner_address:str, commission:int, owner_reward:int, cap:int, total_stake:int, free_stake:int, releasing_stake:int ):
+#pool_id, owner_address, commission, cap
+def insert_pid_owner_info(pool_id:int, owner_address:str, commission:int, cap:int ):
     try:
         conn = common.get_connection()
         with conn:
@@ -30,8 +31,8 @@ def insert_pid_owner_info(pool_id:int, owner_address:str, commission:int, owner_
                     cap = -1
                 if commission == None:
                     commission = 0
-                query_string = f"INSERT INTO phala_pid_owner_info ( pid, owner_address, commission, owner_reward, cap, total_stake, free_stake, releasing_stake )" \
-                        f"VALUES({pool_id}, '{owner_address}', {commission}, {owner_reward}, {cap}, {total_stake}, {free_stake}, {releasing_stake})" 
+                query_string = f"INSERT INTO phala_pid_owner_info ( pid, owner_address, commission, cap )" \
+                        f"VALUES({pool_id}, '{owner_address}', {commission}, {cap} )" 
                         #f"ON CONFLICT ( pid, owner_address, commission, owner_reward, cap, total_stake, free_stake, releasing_stake ) " \
                         #f"DO UPDATE SET  pid = {pool_id}, owner_address='{owner_address}', commission={commission}, owner_reward={owner_reward}, cap={cap}, total_stake={total_stake}, free_stake={free_stake}, releasing_stake={releasing_stake} "
                 cur.execute(query_string)
@@ -157,7 +158,7 @@ def get_pool_info(pid:str):
         conn = common.get_connection()
         with conn:
             with conn.cursor() as cur:
-                query_string = f"SELECT owner_address, commission, owner_reward, cap, total_stake, free_stake, releasing_stake " \
+                query_string = f"SELECT owner_address, commission, cap " \
                     f"from phala_pid_owner_info WHERE pid='{pid}' "
 
                 cur.execute(query_string)
@@ -165,15 +166,15 @@ def get_pool_info(pid:str):
                 
                 if not result:
                     return False
-                   
+                logging.info(f"get_pool_info_result::{result}")   
                 return_value = {
                     'owner_address': result[0][0],
                     'commission': result[0][1],
-                    'owner_reward': result[0][2],
-                    'cap': result[0][3],
-                    'total_stake': result[0][4],
-                    'free_stake': result[0][5],
-                    'releasing_stake': result[0][6]
+                    #'owner_reward': result[0][2],
+                    'cap': result[0][2]
+                    #'total_stake': result[0][4],
+                    #'free_stake': result[0][5],
+                    #'releasing_stake': result[0][6]
                 }
 
                 return return_value
