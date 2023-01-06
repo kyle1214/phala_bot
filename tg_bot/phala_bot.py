@@ -526,7 +526,7 @@ def send_status_notification():
                     #if status == 'MiningIdle':
                     #    status = 'Mining '
                     #    emoji = '🟢'
-                    if status == 'MiningUnresponsive':
+                    if status == 'WorkerUnresponsive':
                         status = "Unresponsive "
                         emoji = '🔴'
                     #elif status == "MiningCoolingDown":
@@ -545,8 +545,12 @@ def send_status_notification():
             text = "🔔 Status Change Alert 🔔\n"
             text += " \n" 
             text += msg_text
-            logging.info(f"🔔send_status_notification:{chat_id}:time:{d}:mins:{d.minute}:{interval}:\n{msg_text}")                    
-            BOT.send_message(chat_id=str(chat_id),text=text)
+            logging.info(f"🔔send_status_notification:{chat_id}:time:{d}:mins:{d.minute}:{interval}:\n{msg_text}")  
+            if len(text) > 4096:
+                for x in range(0, len(text), 4096):
+                    BOT.send_message(chat_id=str(chat_id),text=text[x:x+4096])
+            else:                  
+                BOT.send_message(chat_id=str(chat_id),text=text)
 
 
 def main() -> None:
